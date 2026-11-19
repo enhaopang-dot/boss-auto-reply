@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Boss直聘自动拓客",
+  "version": "2.0.43",
+  "description": "Boss直聘自动拓客插件 - 向目标岗位招聘方发送AI Agent服务推广消息",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tabs",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "https://www.zhipin.com/*",
+    "https://api.moonshot.cn/*",
+    "https://api.moonshot.ai/*",
+    "https://api.kimi.com/*",
+    "https://api.deepseek.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.zhipin.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Boss直聘自动拓客",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  }
+}

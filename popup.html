@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      width: 400px;
+      margin: 0;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      font-size: 13px;
+      color: #333;
+      background: #f5f5f5;
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      color: #00b38a;
+      text-align: center;
+    }
+    .section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #555;
+      font-size: 13px;
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+      color: #666;
+      font-size: 12px;
+    }
+    input[type="text"], input[type="number"], input[type="password"], textarea, select {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-bottom: 8px;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #00b38a;
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .row { display: flex; gap: 8px; }
+    .row input, .row select { flex: 1; }
+    .hint {
+      font-size: 11px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .warning {
+      font-size: 11px;
+      color: #ff4d4f;
+      background: #fff2f0;
+      padding: 8px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.85; }
+    .btn-start { background: #00b38a; color: #fff; }
+    .btn-stop { background: #ff4d4f; color: #fff; }
+    .btn-save { background: #1890ff; color: #fff; }
+    .status {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      text-align: center;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .status.idle { background: #e6f7ff; color: #1890ff; }
+    .status.running { background: #f6ffed; color: #52c41a; }
+    .status.error { background: #fff2f0; color: #ff4d4f; }
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #eee;
+    }
+    .stat-item { text-align: center; }
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #00b38a;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #999;
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .checkbox-row input[type="checkbox"] { margin: 0; }
+    .checkbox-row label { margin: 0; display: inline; }
+  </style>
+</head>
+<body>
+  <h2>Boss直聘自动拓客 <span id="version" style="font-size:11px;color:#999;font-weight:normal;"></span></h2>
+
+  <div class="warning">
+    风险提示：自动发送消息可能被 Boss 直聘限流或封号。建议先用小号测试，每日发送量不要超过设置上限。
+  </div>
+
+  <div class="section">
+    <div class="section-title">筛选条件</div>
+    <label>目标城市</label>
+    <input type="text" id="targetCity" placeholder="杭州">
+
+    <label>求职期望标签（职位来源，点不到时用下方搜索兜底）</label>
+    <input type="text" id="targetTab" placeholder="国内电商运营（杭州）">
+
+    <label>搜索兜底关键词（城市写在词里，标签不可用才用）</label>
+    <input type="text" id="searchKeyword" placeholder="电商运营杭州">
+
+    <div class="row">
+      <div style="flex:1">
+        <label>最低薪资(K)</label>
+        <input type="number" id="salaryMin" placeholder="20" value="20">
+      </div>
+      <div style="flex:1">
+        <label>最高薪资(K)</label>
+        <input type="number" id="salaryMax" placeholder="100" value="100">
+      </div>
+      <div style="flex:1">
+        <label>每日上限</label>
+        <input type="number" id="dailyLimit" placeholder="150" value="150">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:8px;">
+      <div style="flex:1">
+        <label>最小间隔(秒)</label>
+        <input type="number" id="intervalMin" placeholder="30" value="30">
+      </div>
+      <div style="flex:1">
+        <label>最大间隔(秒)</label>
+        <input type="number" id="intervalMax" placeholder="90" value="90">
+      </div>
+      <div style="flex:1"></div>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="workHoursOnly">
+      <label for="workHoursOnly">只在 9:00-18:00 运行</label>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">开场白（支持 【岗位名】 变量）</div>
+    <textarea id="greeting"></textarea>
+    <div class="hint">变量 【岗位名】 会自动替换为当前职位名称</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">大模型配置（用于 AI 识图与岗位评分）</div>
+    <label>API Key</label>
+    <input type="password" id="llmApiKey" placeholder="sk-...">
+
+    <label>API 类型</label>
+    <select id="llmApiType">
+      <option value="auto">自动识别（默认 OpenAI 兼容格式）</option>
+      <option value="openai">OpenAI 兼容端点（DeepSeek / Moonshot 等）</option>
+      <option value="anthropic">Anthropic Messages（需自行填写 Base URL 与模型）</option>
+    </select>
+
+    <label>API Base URL</label>
+    <input type="text" id="llmBaseUrl" placeholder="https://api.deepseek.com/v1">
+
+    <label>模型名称</label>
+    <input type="text" id="llmModel" placeholder="deepseek-flash">
+
+    <div class="checkbox-row" style="margin-top:8px;">
+      <input type="checkbox" id="useLlmScoring" checked>
+      <label for="useLlmScoring">使用 LLM 评分（关闭后按岗位关键词快速评分）</label>
+    </div>
+
+    <div class="row" style="margin-top:8px;">
+      <div style="flex:1">
+        <label>匹配阈值(0-100)</label>
+        <input type="number" id="llmThreshold" placeholder="70" value="70">
+      </div>
+      <div style="flex:2; display:flex; align-items:flex-end;">
+        <button id="btnTestLlm" style="width:100%;padding:8px;font-size:12px;background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff;border-radius:6px;cursor:pointer;">测试 LLM 连通性</button>
+      </div>
+    </div>
+
+    <pre id="llmTestResult" style="display:none;font-size:11px;color:#666;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow:auto;background:#f8f8f8;padding:8px;border-radius:4px;font-family:'Consolas',monospace;margin-top:8px;"></pre>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn-save" id="btnSave">保存配置</button>
+    <button class="btn-start" id="btnStart">开始拓客</button>
+    <button class="btn-stop" id="btnStop" style="display:none;">停止</button>
+  </div>
+
+  <div style="margin-top:8px;">
+    <button id="btnForceStop" style="width:100%;padding:8px;font-size:12px;background:#fff2f0;color:#ff4d4f;border:1px solid #ffccc7;border-radius:6px;cursor:pointer;">强制停止（清空状态并刷新页面）</button>
+  </div>
+
+  <div style="margin-top:8px;">
+    <button id="btnDiagnose" style="width:100%;padding:8px;font-size:12px;background:#f0f0f0;color:#666;border:1px solid #ddd;border-radius:6px;cursor:pointer;">诊断页面（不依赖 content script）</button>
+  </div>
+
+  <div style="margin-top:8px;">
+    <button id="btnClearSent" style="width:100%;padding:8px;font-size:12px;background:#fff2f0;color:#ff4d4f;border:1px solid #ffccc7;border-radius:6px;cursor:pointer;">清空发送记录（30 天去重数据）</button>
+  </div>
+
+  <div class="section" id="diagnoseSection" style="display:none;">
+    <div class="section-title">诊断结果</div>
+    <pre id="diagnoseResult" style="font-size:11px;color:#666;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow:auto;background:#f8f8f8;padding:8px;border-radius:4px;font-family:'Consolas',monospace;"></pre>
+  </div>
+
+  <div class="status idle" id="status">就绪 - 请在Boss直聘职位页使用</div>
+
+  <div class="section" id="statsSection" style="display:none;">
+    <div class="section-title">本次统计</div>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">总计</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statSuccess">0</div>
+        <div class="stat-label">已发送</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statSkipped">0</div>
+        <div class="stat-label">跳过</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="statFailed">0</div>
+        <div class="stat-label">失败</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="logSection">
+    <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>执行日志</span>
+      <div style="display:flex;gap:6px;">
+        <button id="btnCopyLog" style="padding:2px 8px;font-size:11px;background:#e6f7ff;color:#1890ff;border:1px solid #91d5ff;border-radius:4px;cursor:pointer;">复制最近200条</button>
+        <button id="btnRefreshLog" style="padding:2px 8px;font-size:11px;background:#f0f0f0;color:#666;border:1px solid #ddd;border-radius:4px;cursor:pointer;">刷新</button>
+      </div>
+    </div>
+    <pre id="logResult" style="font-size:11px;color:#666;white-space:pre-wrap;word-break:break-all;max-height:250px;overflow:auto;background:#1e1e1e;color:#d4d4d4;padding:8px;border-radius:4px;font-family:'Consolas',monospace;"></pre>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
